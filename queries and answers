@@ -1,0 +1,68 @@
+--Table exists already, so start from here
+--Create the index, then drop it(Q1)
+CREATE INDEX IdxPHONE ON customers(Phone);
+GO
+DROP INDEX IdxPhone ON customers;
+GO
+
+--Q2: Create login + user for bob
+--(If bob already exists, it will say so, that's ok)
+CREATE LOGIN bob WITH PASSWORD = 'S$CU3r3!';
+GO
+CREATE USER bob FOR LOGIN bob;
+GO
+
+--Q3: Grant INSERT
+GRANT INSERT TO bob;
+GO
+
+--Q4: Change password
+ALTER LOGIN bob WITH PASSWORD = 'p$55!23';
+GO
+
+
+
+
+
+## Answer
+Msg 1913, Level 16, State 1, Line 3
+The operation failed because an index or statistics with name 'IdxPHONE' already exists on table 'customers'.
+Msg 15025, Level 16, State 1, Line 10
+The server principal 'bob' already exists.
+Msg 15023, Level 16, State 5, Line 12
+User, group, or role 'bob' already exists in the current database.
+
+Completion time: 2026-11-17T17:57:06.6122892+03:00
+
+
+
+
+### Querie 2
+--Check what indexes are REALLY on customers
+SELECT name AS IndexName FROM sys.indexes WHERE object_id = OBJECT_ID('customers');
+GO
+
+--Check bob exists
+SELECT name FROM sys.server_principals WHERE name = 'bob';
+GO
+
+--Check bob has INSERT
+SELECT permission_name FROM sys.database_permissions WHERE grantee_principal_id = USER_ID('bob');
+GO
+
+
+## Answer
+IndexName
+1: PK__customer__A4AE64B89C1C907F
+
+name
+1: bob
+
+permission_name
+1: CONNECT
+2: INSERT
+
+
+
+
+
